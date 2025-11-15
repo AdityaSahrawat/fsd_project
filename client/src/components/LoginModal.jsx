@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { authAPI } from '../api/api';
+import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import './LoginModal.css';
+
+const API_URL = 'http://localhost:5000/api';
 
 const LoginModal = ({ onClose }) => {
   const [mode, setMode] = useState('login'); // 'login' or 'signup'
@@ -35,7 +37,7 @@ const LoginModal = ({ onClose }) => {
     setLoading(true);
 
     try {
-      await authAPI.sendSignupOTP(email);
+      await axios.post(`${API_URL}/auth/signup/send-otp`, { email });
       setStep('otp');
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to send OTP');
