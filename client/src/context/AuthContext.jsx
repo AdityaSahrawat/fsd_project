@@ -1,5 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { authAPI } from '../api/api';
+import axios from 'axios';
+
+const API_URL = 'http://localhost:5000/api';
 
 const AuthContext = createContext();
 
@@ -21,7 +23,7 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuth = async () => {
     try {
-      const response = await authAPI.getMe();
+      const response = await axios.get(`${API_URL}/auth/me`, { withCredentials: true });
       setUser(response.data.user);
     } catch (error) {
       setUser(null);
@@ -31,19 +33,19 @@ export const AuthProvider = ({ children }) => {
   };
 
   const login = async (email, password) => {
-    const response = await authAPI.login(email, password);
+    const response = await axios.post(`${API_URL}/auth/login`, { email, password }, { withCredentials: true });
     setUser(response.data.user);
     return response.data;
   };
 
   const signup = async (email, otp, name, password) => {
-    const response = await authAPI.verifySignup(email, otp, name, password);
+    const response = await axios.post(`${API_URL}/auth/signup/verify`, { email, otp, name, password }, { withCredentials: true });
     setUser(response.data.user);
     return response.data;
   };
 
   const logout = async () => {
-    await authAPI.logout();
+    await axios.post(`${API_URL}/auth/logout`, {}, { withCredentials: true });
     setUser(null);
   };
 
