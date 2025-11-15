@@ -3,11 +3,13 @@ import { useAuth } from '../context/AuthContext';
 import './Header.css';
 import LoginModal from './LoginModal';
 import UploadModal from './UploadModal';
+import DiscussionModal from './DiscussionModal';
 
 const Header = () => {
   const { user, isAuthenticated, logout } = useAuth();
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [showDiscussionModal, setShowDiscussionModal] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   const handleLogout = async () => {
@@ -33,7 +35,13 @@ const Header = () => {
                   className="btn btn-primary"
                   onClick={() => setShowUploadModal(true)}
                 >
-                  + Upload Problem
+                  + Report Problem
+                </button>
+                <button 
+                  className="btn btn-secondary"
+                  onClick={() => setShowDiscussionModal(true)}
+                >
+                  💬 Start Discussion
                 </button>
                 <div className="profile-container">
                   <button 
@@ -76,6 +84,10 @@ const Header = () => {
       
       {showUploadModal && (
         <UploadModal onClose={() => setShowUploadModal(false)} />
+      )}
+
+      {showDiscussionModal && (
+        <DiscussionModal onClose={() => setShowDiscussionModal(false)} />
       )}
     </>
   );
