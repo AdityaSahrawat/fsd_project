@@ -162,6 +162,17 @@ router.patch('/:id/status', authenticate, isAdmin, async (req, res) => {
       return res.status(400).json({ error: 'Invalid status' });
     }
 
+    // Prevent changing from COMPLETED to other statuses
+    const existingProblem = await prisma.problem.findUnique({ where: { id } });
+    if (existingProblem?.status === 'COMPLETED' && status !== 'COMPLETED') {
+      return res.status(400).json({ error: 'Cannot change status from COMPLETED' });
+    }
+
+    // If marking as COMPLETED, require using the /complete endpoint
+    if (status === 'COMPLETED') {
+      return res.status(400).json({ error: 'Use /problems/:id/complete endpoint to mark as completed with proof' });
+    }
+
     const problem = await prisma.problem.update({
       where: { id },
       data: { status },
@@ -169,12 +180,68 @@ router.patch('/:id/status', authenticate, isAdmin, async (req, res) => {
         user: {
           select: { id: true, email: true, name: true },
         },
+        votes: true,
+        comments: {
+          include: {
+            user: {
+              select: { id: true, email: true, name: true },
+            },
+          },
+          orderBy: { createdAt: 'desc' },
+        },
       },
     });
 
     res.json(problem);
   } catch (error) {
     res.status(500).json({ error: 'Failed to update problem status' });
+  }
+});
+
+// Complete problem with proof (admin only)
+router.post('/:id/complete', authenticate, isAdmin, upload.array('proofImages', 5), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const files = req.files as Express.Multer.File[];
+
+    if (!files || files.length === 0) {
+      return res.status(400).json({ error: 'At least one proof image is required' });
+    }
+
+    // Prevent changing from COMPLETED
+    const existingProblem = await prisma.problem.findUnique({ where: { id } });
+    if (existingProblem?.status === 'COMPLETED') {
+      return res.status(400).json({ error: 'Problem is already marked as completed' });
+    }
+
+    const proofPaths = files.map(file => `/uploads/problems/${file.filename}`);
+
+    const problem = await prisma.problem.update({
+      where: { id },
+      data: { 
+        status: 'COMPLETED',
+        completionProof: proofPaths,
+      },
+      include: {
+        user: {
+          select: { id: true, email: true, name: true },
+        },
+        votes: true,
+        comments: {
+          include: {
+            user: {
+              select: { id: true, email: true, name: true },
+            },
+          },
+          orderBy: { createdAt: 'desc' },
+        },
+      },
+    });
+
+    res.json(problem);
+  } catch (error) {
+    console.error('Complete problem error:', error);
+    res.status(500).json({ error: 'Failed to complete problem' });
   }
 });
 

@@ -110,6 +110,10 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ error: 'User not found. Please signup first.' });
     }
 
+    if (!user.password) {
+      return res.status(400).json({ error: 'Password not set. Please signup again.' });
+    }
+
     const isValidPassword = await bcrypt.compare(password, user.password);
 
     if (!isValidPassword) {

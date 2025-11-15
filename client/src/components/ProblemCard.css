@@ -181,6 +181,46 @@
   flex: 1;
 }
 
+.completion-proof {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: #f0fdf4;
+  border-radius: 8px;
+  border: 2px solid #10b981;
+}
+
+.completion-title {
+  margin: 0 0 1rem 0;
+  color: #059669;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.proof-images {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.75rem;
+}
+
+.proof-image-container {
+  aspect-ratio: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #dcfce7;
+}
+
+.proof-media {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.proof-media:hover {
+  transform: scale(1.05);
+}
+
 .problem-actions {
   display: flex;
   align-items: center;

@@ -2,14 +2,16 @@ import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useProblem } from '../context/ProblemContext';
 import CommentSection from './CommentSection';
+import CompletionModal from './CompletionModal';
 import './ProblemCard.css';
 
 const ProblemCard = ({ problem }) => {
   const { user, isAdmin } = useAuth();
-  const { updateProblemStatus, handleVote } = useProblem();
+  const { updateProblemStatus, handleVote, updateProblemInList } = useProblem();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showComments, setShowComments] = useState(false);
   const [userVote, setUserVote] = useState(null);
+  const [showCompletionModal, setShowCompletionModal] = useState(false);
 
   const statusColors = {
     PENDING: '#f59e0b',
@@ -24,10 +26,27 @@ const ProblemCard = ({ problem }) => {
   };
 
   const handleStatusChange = async (newStatus) => {
+    if (newStatus === 'COMPLETED') {
+      setShowCompletionModal(true);
+      return;
+    }
+
+    if (problem.status === 'COMPLETED') {
+      alert('Cannot change status from Completed');
+      return;
+    }
+
     try {
       await updateProblemStatus(problem.id, newStatus);
     } catch (error) {
       console.error('Error updating status:', error);
+      alert(error.response?.data?.error || 'Failed to update status');
+    }
+  };
+
+  const handleCompletionSuccess = (updatedProblem) => {
+    if (updateProblemInList) {
+      updateProblemInList(updatedProblem);
     }
   };
 
@@ -37,7 +56,6 @@ const ProblemCard = ({ problem }) => {
     try {
       const response = await handleVote(problem.id, type);
       
-      // Update local vote state based on server response
       if (response.action === 'removed') {
         setUserVote(null);
       } else {
@@ -159,6 +177,31 @@ const ProblemCard = ({ problem }) => {
 
             <p className="problem-description">{problem.description}</p>
 
+            {problem.status === 'COMPLETED' && problem.completionProof && problem.completionProof.length > 0 && (
+              <div className="completion-proof">
+                <h4 className="completion-title">✅ Completion Proof:</h4>
+                <div className="proof-images">
+                  {problem.completionProof.map((proof, index) => (
+                    <div key={index} className="proof-image-container">
+                      {proof.endsWith('.mp4') || proof.endsWith('.mov') || proof.endsWith('.avi') ? (
+                        <video 
+                          src={`http://localhost:5000${proof}`}
+                          controls
+                          className="proof-media"
+                        />
+                      ) : (
+                        <img 
+                          src={`http://localhost:5000${proof}`}
+                          alt={`Completion proof ${index + 1}`}
+                          className="proof-media"
+                        />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div className="problem-actions">
               <div className="vote-buttons">
                 <button 
@@ -194,6 +237,14 @@ const ProblemCard = ({ problem }) => {
         <CommentSection 
           problem={problem}
           onClose={() => setShowComments(false)}
+        />
+      )}
+
+      {showCompletionModal && (
+        <CompletionModal
+          problemId={problem.id}
+          onClose={() => setShowCompletionModal(false)}
+          onComplete={handleCompletionSuccess}
         />
       )}
     </>
