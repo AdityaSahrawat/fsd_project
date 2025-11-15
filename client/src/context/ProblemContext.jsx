@@ -1,5 +1,7 @@
 import { createContext, useContext, useState, useCallback } from 'react';
-import { problemsAPI, commentsAPI, votesAPI } from '../api/api';
+import axios from 'axios';
+
+const API_URL = 'http://localhost:5000/api';
 
 const ProblemContext = createContext();
 
@@ -18,7 +20,7 @@ export const ProblemProvider = ({ children }) => {
   const fetchProblems = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await problemsAPI.getAll();
+      const response = await axios.get(`${API_URL}/problems`);
       setProblems(response.data);
     } catch (error) {
       console.error('Error fetching problems:', error);
@@ -28,19 +30,48 @@ export const ProblemProvider = ({ children }) => {
   }, []);
 
   const createProblem = async (formData) => {
-    const response = await problemsAPI.create(formData);
+    const response = await axios.post(`${API_URL}/problems`, formData, {
+      withCredentials: true,
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
     setProblems([response.data, ...problems]);
     return response.data;
   };
 
-  const updateProblemStatus = async (problemId, status) => {
-    const response = await problemsAPI.updateStatus(problemId, status);
-    setProblems(problems.map(p => p.id === problemId ? response.data : p));
+  const updateProblemStatus = async (problemId, status, formData = null) => {
+    let response;
+    if (formData) {
+      // Update with completion proof
+      response = await axios.patch(`${API_URL}/problems/${problemId}/complete`, formData, {
+        withCredentials: true,
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+    } else {
+      // Regular status update
+      response = await axios.patch(`${API_URL}/problems/${problemId}/status`, { status }, {
+        withCredentials: true,
+      });
+    }
+    
+    // Update the problem in state while preserving comments
+    setProblems(problems.map(p => {
+      if (p.id === problemId) {
+        return {
+          ...response.data,
+          comments: p.comments, // Preserve existing comments
+          upvotes: p.upvotes,
+          downvotes: p.downvotes,
+        };
+      }
+      return p;
+    }));
     return response.data;
   };
 
   const addComment = async (problemId, text) => {
-    const response = await commentsAPI.create(problemId, text);
+    const response = await axios.post(`${API_URL}/comments`, { problemId, text }, {
+      withCredentials: true,
+    });
     // Update the problem with the new comment
     setProblems(problems.map(p => {
       if (p.id === problemId) {
@@ -55,7 +86,9 @@ export const ProblemProvider = ({ children }) => {
   };
 
   const handleVote = async (problemId, type) => {
-    const response = await votesAPI.vote(problemId, type);
+    const response = await axios.post(`${API_URL}/votes`, { problemId, type }, {
+      withCredentials: true,
+    });
     
     // Update the specific problem locally instead of fetching all
     setProblems(problems.map(p => {
@@ -92,12 +125,17 @@ export const ProblemProvider = ({ children }) => {
     return response.data;
   };
 
+  const updateProblemInList = useCallback((updatedProblem) => {
+    setProblems(problems.map(p => p.id === updatedProblem.id ? updatedProblem : p));
+  }, [problems]);
+
   const value = {
     problems,
     loading,
     fetchProblems,
     createProblem,
     updateProblemStatus,
+    updateProblemInList,
     addComment,
     handleVote,
   };
