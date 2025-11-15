@@ -21,9 +21,13 @@ model User {
   isAdmin   Boolean  @default(false)
   createdAt DateTime @default(now())
   
-  problems  Problem[]
-  comments  Comment[]
-  votes     Vote[]
+  problems     Problem[]
+  discussions  Discussion[]
+  comments     Comment[]
+  votes        Vote[]
+  discVotes    DiscussionVote[]
+  discComments DiscussionComment[]
+  commentVotes DiscussionCommentVote[]
 }
 
 model Problem {
@@ -78,6 +82,67 @@ model Vote {
 enum VoteType {
   UPVOTE
   DOWNVOTE
+}
+
+model Discussion {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  images      String[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  
+  comments    DiscussionComment[]
+  votes       DiscussionVote[]
+}
+
+model DiscussionComment {
+  id              String     @id @default(uuid())
+  text            String
+  createdAt       DateTime   @default(now())
+  
+  userId          String
+  user            User       @relation(fields: [userId], references: [id])
+  
+  discussionId    String
+  discussion      Discussion @relation(fields: [discussionId], references: [id], onDelete: Cascade)
+  
+  parentCommentId String?
+  parentComment   DiscussionComment?  @relation("CommentReplies", fields: [parentCommentId], references: [id], onDelete: Cascade)
+  replies         DiscussionComment[] @relation("CommentReplies")
+  
+  votes           DiscussionCommentVote[]
+}
+
+model DiscussionCommentVote {
+  id        String   @id @default(uuid())
+  type      VoteType
+  createdAt DateTime @default(now())
+  
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  
+  commentId String
+  comment   DiscussionComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, commentId])
+}
+
+model DiscussionVote {
+  id           String     @id @default(uuid())
+  type         VoteType
+  createdAt    DateTime   @default(now())
+  
+  userId       String
+  user         User       @relation(fields: [userId], references: [id])
+  
+  discussionId String
+  discussion   Discussion @relation(fields: [discussionId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, discussionId])
 }
 
 model OTP {

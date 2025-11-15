@@ -6,6 +6,7 @@ import authRoutes from './routes/auth';
 import problemRoutes from './routes/problems';
 import commentRoutes from './routes/comments';
 import voteRoutes from './routes/votes';
+import discussionRoutes from './routes/discussions';
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/problems', problemRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/votes', voteRoutes);
+app.use('/api/discussions', discussionRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });
