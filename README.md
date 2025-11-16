@@ -1,10 +1,10 @@
-# UniConnet
+# UniKonnect
 
 A campus community platform where students can report problems, start discussions, and engage through comments in real-time with secure authentication.
 
 ## 🎯 Project Overview
 
-CampusVoice is a web application designed to give students a centralized platform to:
+UniKonnect is a web application designed to give students a centralized platform to:
 - **Report Campus Problems** - Submit and track campus issues (broken facilities, safety concerns, etc.)
 - **Start Discussions** - Create and participate in campus-related conversations
 - **Engage with Community** - Comment and interact in real-time without page reloads
