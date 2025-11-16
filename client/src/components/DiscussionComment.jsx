@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
-import './YouTubeComment.css';
+import './DiscussionComment.css';
 
 const API_URL = 'http://localhost:5000/api';
 
