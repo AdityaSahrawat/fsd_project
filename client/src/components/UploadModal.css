@@ -1,5 +1,256 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  padding: 1rem;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  max-width: 450px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .modal-large {
   max-width: 600px;
   max-height: 90vh;
   overflow-y: auto;
+}
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: transparent;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #9ca3af;
+  line-height: 1;
+  transition: color 0.2s ease;
+}
+
+.modal-close:hover {
+  color: #374151;
+}
+
+.modal-header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.modal-header h2 {
+  margin: 0 0 0.5rem 0;
+  color: #1f2937;
+  font-size: 1.75rem;
+}
+
+.modal-header p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-weight: 500;
+  color: #374151;
+  font-size: 0.95rem;
+}
+
+.form-group input,
+.form-group textarea {
+  padding: 0.75rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-group textarea {
+  min-height: 100px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.file-input-wrapper {
+  position: relative;
+}
+
+.file-input {
+  display: none;
+}
+
+.file-input-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 3rem 1rem;
+  border: 2px dashed #d1d5db;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #6b7280;
+}
+
+.file-input-label:hover {
+  border-color: #667eea;
+  background: #f9fafb;
+}
+
+.file-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.file-name {
+  flex: 1;
+  font-size: 0.9rem;
+  color: #374151;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-remove {
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s ease;
+}
+
+.file-remove:hover {
+  background: #dc2626;
+}
+
+.error-message {
+  padding: 0.75rem;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  color: #dc2626;
+  font-size: 0.9rem;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.modal-actions .btn-primary,
+.modal-actions .btn-secondary {
+  flex: 1;
+  padding: 0.875rem 1.25rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-actions .btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.modal-actions .btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+.modal-actions .btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.modal-actions .btn-secondary {
+  background: #f3f4f6;
+  color: #374151;
+  border: 2px solid #e5e7eb;
+}
+
+.modal-actions .btn-secondary:hover {
+  background: #e5e7eb;
+  border-color: #d1d5db;
+}
+
+@media (max-width: 640px) {
+  .modal-content {
+    padding: 1.5rem;
+  }
+
+  .modal-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+  }
 }
