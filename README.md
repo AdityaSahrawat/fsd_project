@@ -83,7 +83,7 @@ fsd/
 ## 🔧 Setup & Installation
 
 ### Prerequisites
-- Node.js (v16+)
+- Node.js (v20+)
 - PostgreSQL database or Neon account
 - npm or pnpm
 
