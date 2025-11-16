@@ -24,7 +24,7 @@ const Header = () => {
           <div className="header-left">
             <div className="logo">
               <span className="logo-icon">🏫</span>
-              <span className="logo-text">College Issue Portal</span>
+              <span className="logo-text">UniKonnect</span>
             </div>
           </div>
 

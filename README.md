@@ -4,7 +4,6 @@ A campus community platform where students can report problems, start discussion
 
 ## 🎯 Project Overview
 
-
 UniKonnect is a web application designed to give students a centralized platform to:
 - **Report Campus Problems** - Submit and track campus issues (broken facilities, safety concerns, etc.)
 - **Start Discussions** - Create and participate in campus-related conversations
@@ -84,7 +83,7 @@ fsd/
 ## 🔧 Setup & Installation
 
 ### Prerequisites
-- Node.js (v16+)
+- Node.js (v20+)
 - PostgreSQL database or Neon account
 - npm or pnpm
 
